@@ -23,7 +23,7 @@ async function run() {
         const addedItemCollection = client.db("taskDetaile").collection("addedItem");
         const addedRulesCollection = client.db("taskDetaile").collection("addedRules");
         const orderCollection = client.db("taskDetaile").collection("order");
-        const userCollection = client.db("taskDetaile").collection("user");
+        const userRegistionCollection = client.db("taskDetaile").collection("userRegistion");
         const hillTracRaceResultCollection = client.db("taskDetaile").collection("hillTracRaceResult");
         const boyLongRaceResultCollection = client.db("taskDetaile").collection("boyLongRaceResult");
         const boyShortRaceResultCollection = client.db("taskDetaile").collection("boyShortRaceResult");
@@ -79,10 +79,13 @@ async function run() {
             const result = await addedRulesCollection.deleteOne(query);
             res.send(result);
         });
+        
+
         // hillTracRaceResult
         app.get('/hillTracRaceResult',async (req, res) => {
-            const query = {}
-            const cursor = hillTracRaceResultCollection.find(query)
+            // const query = {}
+            // const cursor = hillTracRaceResultCollection.find(query)
+            const cursor = hillTracRaceResultCollection.find().sort("Time").limit(1000)
             const hillTracRaceResults = await cursor.toArray()
             res.send(hillTracRaceResults)
         })
@@ -101,7 +104,7 @@ async function run() {
         //  boyLongRaceResult
         app.get('/boyLongRaceResult',async (req, res) => {
         
-            const cursor = boyLongRaceResultCollection.find().sort("Time").limit(100)
+            const cursor = boyLongRaceResultCollection.find().sort("Time").limit(1000)
             // .exec((err,val)=>{
             //     if(err)
             //     {
@@ -115,6 +118,7 @@ async function run() {
             //const cursor = boyLongRaceResultCollection.find(query)
             const boyLongRaceResults = await cursor.toArray()
             res.send(boyLongRaceResults)
+            
         })
         app.post('/boyLongRaceResult', async (req, res) => {
             const newAddedItem = req.body;
@@ -130,8 +134,9 @@ async function run() {
 
         // boyShortRaceResult
         app.get('/boyShortRaceResult',async (req, res) => {
-            const query = {}
-            const cursor = boyShortRaceResultCollection.find(query)
+            // const query = {}
+            // const cursor = boyShortRaceResultCollection.find(query)
+            const cursor = boyShortRaceResultCollection.find().sort("Time").limit(1000)
             const boyShortRaceResults = await cursor.toArray()
             res.send(boyShortRaceResults)
         })
@@ -149,8 +154,9 @@ async function run() {
 
         // lapWiseRaceResult
         app.get('/lapWiseRaceResult',async (req, res) => {
-            const query = {}
-            const cursor = lapWiseRaceResultCollection.find(query)
+            // const query = {}
+            // const cursor = lapWiseRaceResultCollection.find(query)
+            const cursor = lapWiseRaceResultCollection.find().sort("Time").limit(1000)
             const lapWiseRaceResults = await cursor.toArray()
             res.send(lapWiseRaceResults)
         })
@@ -168,8 +174,9 @@ async function run() {
 
         // womanLongRaceResult
         app.get('/womanLongRaceResult',async (req, res) => {
-            const query = {}
-            const cursor = womanLongRaceResultCollection.find(query)
+            // const query = {}
+            // const cursor = womanLongRaceResultCollection.find(query)
+            const cursor = womanLongRaceResultCollection.find().sort("Time").limit(1000)
             const womanLongRaceResults = await cursor.toArray()
             res.send(womanLongRaceResults)
         })
@@ -187,8 +194,9 @@ async function run() {
 
         // womanShortRaceResult
         app.get('/womanShortRaceResult',async (req, res) => {
-            const query = {}
-            const cursor = womanShortRaceResultCollection.find(query)
+            // const query = {}
+            // const cursor = womanShortRaceResultCollection.find(query)
+            const cursor = womanShortRaceResultCollection.find().sort("Time").limit(1000)
             const womanShortRaceResults = await cursor.toArray()
             res.send(womanShortRaceResults)
         })
@@ -204,11 +212,38 @@ async function run() {
             res.send(result);
         });
 
+        // userRegistion
+        app.get('/userRegistion',async (req, res) => {
+            const email = req.query.email
+            // const query = { email : email }
+            const cursor = userRegistionCollection.find().sort({point : -1}).limit(1)
+            const userRegistion = await cursor.toArray()
+            res.send(userRegistion)
+        })
+        app.post('/userRegistion', async (req, res) => {
+            const newAddedItem = req.body;
+            const result = await userRegistionCollection.insertOne(newAddedItem);
+            res.send(result)
+        })
+        app.delete('/userRegistion/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await userRegistionCollection.deleteOne(query);
+            res.send(result);
+        });
+        app.put('/userRegistion/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await userRegistionCollection.deleteOne(query);
+            res.send(result);
+        });
+
+
 
         app.get('/order', async (req, res) => {
             const email = req.query.email
             // const query={} for showing all participition
-            const query = { email: email }
+            const query = { email : email }
             const cursor = orderCollection.find(query)
             const order = await cursor.toArray()
             res.send(order)
