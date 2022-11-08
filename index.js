@@ -215,8 +215,8 @@ async function run() {
         // userRegistion
         app.get('/userRegistion',async (req, res) => {
             const email = req.query.email
-            // const query = { email : email }
-            const cursor = userRegistionCollection.find().sort({point : -1}).limit(1)
+            const query = { email : email }
+            const cursor = userRegistionCollection.find(query).sort({point : -1}).limit(1)
             const userRegistion = await cursor.toArray()
             res.send(userRegistion)
         })
